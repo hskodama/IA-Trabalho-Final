@@ -1,7 +1,7 @@
 '''
 Filename: c:\cygwin64\home\Shinki\datasets\k-medias.py
 Path: c:\cygwin64\home\Shinki\datasets
-Created Date: Sunday, January 6th 2019, 10:43:47 pm
+Created Date: Sunday, January 12th 2019, 10:22:47 pm
 Author: Henrique Kodama, Carlos Tadeu, Vinicius Salinas, Bruno Peres
 
 Copyright (c) 2019 Your Company
@@ -12,6 +12,9 @@ import numpy as np
 import matplotlib.pyplot as plot
 import random
 import math
+# import sklearn
+
+# TODO: Verificar se sklearn esta funcionando
 
 # Detclaracao do tamanho do grafico, tipo de grafico
 plot.rcParams['figure.figsize'] = (16, 9)
@@ -26,6 +29,7 @@ def initialize(dots_X, dots_Y, centroids_X, centroids_Y, closest_centroid):
 
     # Para todos os pontos, calcula o centroide mais proximo e guarda no vetor closest_centroid
     for i in range(len(dots_X)):
+        # aux = infinito (maximo valor de float)
         aux = float("inf")
         distance = 0.0
 
@@ -65,28 +69,32 @@ def main():
     # centroids_X contem as coordenadas X dos centroides declarados randomicamente
     # centroids_Y contem as coordenadas Y dos centroides declarados randomicamente
     # closest_centroid contem o numero do centroide mais proximo do ponto em dada iteracao (0, 1, .... , N)
+    # compare_values eh utilizado para o indice rand ajustado para comparar a similaridade entre clusters
     # i e utilizado como auxiliar
-    # run e usado para verificar o loop do algoritmo
-    dots_X, dots_Y, centroids_X, centroids_Y, closest_centroid = ([] for i in range(5))
+    dots_X, dots_Y, centroids_X, centroids_Y, closest_centroid, compare_values = ([] for i in range(6))
     i = 0
     run = 1
 
     # Pergunta o arquivo desejado e espera a quantidade de clusters desejados
     print(""" 
-    1. c2ds1-2sp.txt
-    2. c2ds3-2g.txt
-    3. monkey.txt
+    1. c2ds1-2sp.txt (2 - 5 clusters)
+    2. c2ds3-2g.txt (2 - 5 clusters)
+    3. monkey.txt (5 - 12 clusters)
     """)
 
     option = int(raw_input("Enter the option: "))
-    N_clusters = int(raw_input("Enter the number of clusters (Max. 8): "))
+    N_clusters = int(raw_input("Enter the number of clusters (2 - 5): "))
+    N_iterations = int(raw_input("Enter the amount of iterations: "))
 
     if(option == 1):
         file_name = "c2ds1-2sp.txt"
+        Realfile_name = "c2ds1-2spReal.clu"
     elif(option == 2):
         file_name = "c2ds3-2g.txt"
+        Realfile_name = "c2ds3-2gReal.clu"
     elif(option == 3):
         file_name = "monkey.txt"
+        Realfile_name = "monkeyReal1.clu"
 
     # Abertura do arquivo como leitura
     read = open(file_name, 'r')
@@ -102,6 +110,14 @@ def main():
         i = i + 1
     read.close()
 
+    # Abertura do arquivo Real 
+    read = open(Realfile_name, 'r')
+
+    # Separacao da segunda coluna do arquivo
+    for line in read:
+        newline = line.rstrip("\n").split("\t")
+        compare_values.append(int(newline[1]))
+
     # Determinacao das coordenadas dos clusters aleatoriamente
     for i in range(N_clusters):
         centroids_X.append(round(random.uniform(min(dots_X), max(dots_X)), 4))
@@ -110,22 +126,33 @@ def main():
     initialize(dots_X, dots_Y, centroids_X, centroids_Y, closest_centroid)
 
     # Loop principal do algoritmo
-    while(run):
+    i = 1
+    while (run and i < N_iterations):
         run = group(dots_X, dots_Y, centroids_X, centroids_Y, closest_centroid)
+        i = i + 1
 
+    print(str(i) + " iterations were made\n")
+
+    # print("\nAdjusted Rand Score: " + str(sklearn.metrics.adjusted_rand_score(compare_values, closest_centroid)))
+   
     # Determina o limite de X e Y do grafico
-    plot.ylim(min(dots_X) - 1, max(dots_X) + 1)
-    plot.xlim(min(dots_Y) - 1, max(dots_Y) + 1)
+    plot.xlim(min(dots_X) - 1, max(dots_X) + 1)
+    plot.ylim(min(dots_Y) - 1, max(dots_Y) + 1)
 
-    # Plota os pontos e atribui a cor ao centroide correspondente
+    # Plota os pontos e atribui a cor ao centroide correspondente na FIGURA1
+    plot.figure(1)
     for i in range(len(dots_X)):
-        plot.plot(dots_X[i], dots_Y[i], colors[closest_centroid[i]], markersize=1)
+        plot.plot(dots_X[i], dots_Y[i], colors[closest_centroid[i] % 8], markersize=1)
 
     # Plota os centroides como estrelas
     for i in range(len(centroids_X)):
-        plot.plot(centroids_X[i], centroids_Y[i], centroid_color[i], markersize=10)
+        plot.plot(centroids_X[i], centroids_Y[i], centroid_color[i % 8], markersize=10)
 
-    # Plota o grafico
+    # Plota os pontos para verificacao na FIGURA2
+    plot.figure(2)
+    for i in range(len(dots_X)):
+        plot.plot(dots_X[i], dots_Y[i], colors[compare_values[i] % 8], markersize=1)
+
     plot.show()
 
 if __name__== "__main__":
