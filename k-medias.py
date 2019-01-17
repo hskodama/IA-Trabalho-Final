@@ -12,7 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plot
 import random
 import math
-# import sklearn
+from sklearn.metrics.cluster import adjusted_rand_score
 
 # TODO: Verificar se sklearn esta funcionando
 
@@ -23,7 +23,8 @@ plot.style.use('ggplot')
 colors = ['bo', 'go', 'ro', 'co', 'mo', 'yo', 'ko', 'wo']
 centroid_color = ['b*', 'g*', 'r*', 'c*', 'm*', 'y*', 'k*', 'w*']
 
-# Funcao para inicializar o vetor closest_centroid 
+
+# Funcao para inicializar o vetor closest_centroid
 def initialize(dots_X, dots_Y, centroids_X, centroids_Y, closest_centroid):
     closest_centroid_index = 0
 
@@ -35,12 +36,13 @@ def initialize(dots_X, dots_Y, centroids_X, centroids_Y, closest_centroid):
 
         # Para todo centroide calcula a distancia euclidiana entre o ponto e os centroides
         for j in range(len(centroids_X)):
-            distance = math.sqrt((dots_X[i] - centroids_X[j])**2 + (dots_Y[i] - centroids_Y[j])**2)
-            if(distance < aux):
+            distance = math.sqrt((dots_X[i] - centroids_X[j]) ** 2 + (dots_Y[i] - centroids_Y[j]) ** 2)
+            if (distance < aux):
                 aux = distance
                 closest_centroid_index = j
-        
+
         closest_centroid.append(closest_centroid_index)
+
 
 # Funcao para iterar e modificar os centroides conforme forem mudando, implementacao identica ao initialize()
 def group(dots_X, dots_Y, centroids_X, centroids_Y, closest_centroid):
@@ -52,16 +54,17 @@ def group(dots_X, dots_Y, centroids_X, centroids_Y, closest_centroid):
         distance = 0.0
 
         for j in range(len(centroids_X)):
-            distance = math.sqrt((dots_X[i] - centroids_X[j])**2 + (dots_Y[i] - centroids_Y[j])**2)
-            if(distance < aux):
+            distance = math.sqrt((dots_X[i] - centroids_X[j]) ** 2 + (dots_Y[i] - centroids_Y[j]) ** 2)
+            if (distance < aux):
                 aux = distance
                 closest_centroid_index = j
-        
-        if(closest_centroid[i] != closest_centroid_index):
+
+        if (closest_centroid[i] != closest_centroid_index):
             centroid_changed = 1
         closest_centroid[i] = closest_centroid_index
-    
+
     return centroid_changed
+
 
 def main():
     # dots_X contem as coordenadas X dos pontos
@@ -82,19 +85,19 @@ def main():
     3. monkey.txt (5 - 12 clusters)
     """)
 
-    option = int(raw_input("Enter the option: "))
-    N_clusters = int(raw_input("Enter the number of clusters (2 - 5): "))
-    N_iterations = int(raw_input("Enter the amount of iterations: "))
+    option = int(input("Enter the option: "))
+    N_clusters = int(input("Enter the number of clusters (2 - 5): "))
+    N_iterations = int(input("Enter the amount of iterations: "))
 
-    if(option == 1):
-        file_name = "c2ds1-2sp.txt"
-        Realfile_name = "c2ds1-2spReal.clu"
-    elif(option == 2):
-        file_name = "c2ds3-2g.txt"
-        Realfile_name = "c2ds3-2gReal.clu"
-    elif(option == 3):
-        file_name = "monkey.txt"
-        Realfile_name = "monkeyReal1.clu"
+    if (option == 1):
+        file_name = "datasets/c2ds1-2sp.txt"
+        Realfile_name = "datasets/c2ds1-2spReal.clu"
+    elif (option == 2):
+        file_name = "datasets/c2ds3-2g.txt"
+        Realfile_name = "datasets/c2ds3-2gReal.clu"
+    elif (option == 3):
+        file_name = "datasets/monkey.txt"
+        Realfile_name = "datasets/monkeyReal1.clu"
 
     # Abertura do arquivo como leitura
     read = open(file_name, 'r')
@@ -104,13 +107,13 @@ def main():
         newline = line.rstrip("\n").split("\t")
         newline[1].replace(".", ",")
         newline[2].replace(".", ",")
-        if(i != 0):
+        if (i != 0):
             dots_X.append(float(newline[1]))
             dots_Y.append(float(newline[2]))
         i = i + 1
     read.close()
 
-    # Abertura do arquivo Real 
+    # Abertura do arquivo Real
     read = open(Realfile_name, 'r')
 
     # Separacao da segunda coluna do arquivo
@@ -133,8 +136,10 @@ def main():
 
     print(str(i) + " iterations were made\n")
 
-    # print("\nAdjusted Rand Score: " + str(sklearn.metrics.adjusted_rand_score(compare_values, closest_centroid)))
-   
+    print(centroids_X)
+    print(centroids_Y)
+    print("\nAdjusted Rand Score: " + str(adjusted_rand_score(compare_values, closest_centroid)))
+
     # Determina o limite de X e Y do grafico
     plot.xlim(min(dots_X) - 1, max(dots_X) + 1)
     plot.ylim(min(dots_Y) - 1, max(dots_Y) + 1)
@@ -155,5 +160,6 @@ def main():
 
     plot.show()
 
-if __name__== "__main__":
+
+if __name__ == "__main__":
     main()
