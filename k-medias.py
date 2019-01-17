@@ -1,7 +1,7 @@
 '''
 Filename: c:\cygwin64\home\Shinki\datasets\k-medias.py
 Path: c:\cygwin64\home\Shinki\datasets
-Created Date: Sunday, January 12th 2019, 10:22:47 pm
+Created Date: Wednesday, January 16th 2019, 10:20:47 pm
 Author: Henrique Kodama, Carlos Tadeu, Vinicius Salinas, Bruno Peres
 
 Copyright (c) 2019 Your Company
@@ -13,8 +13,6 @@ import matplotlib.pyplot as plot
 import random
 import math
 from sklearn.metrics.cluster import adjusted_rand_score
-
-# TODO: Verificar se sklearn esta funcionando
 
 # Detclaracao do tamanho do grafico, tipo de grafico
 plot.rcParams['figure.figsize'] = (16, 9)
@@ -86,18 +84,20 @@ def main():
     """)
 
     option = int(input("Enter the option: "))
-    N_clusters = int(input("Enter the number of clusters (2 - 5): "))
     N_iterations = int(input("Enter the amount of iterations: "))
 
     if (option == 1):
         file_name = "datasets/c2ds1-2sp.txt"
         Realfile_name = "datasets/c2ds1-2spReal.clu"
+        N_clusters = int(input("Enter the number of clusters (2 - 5): "))
     elif (option == 2):
         file_name = "datasets/c2ds3-2g.txt"
         Realfile_name = "datasets/c2ds3-2gReal.clu"
+        N_clusters = int(input("Enter the number of clusters (2 - 5): "))
     elif (option == 3):
         file_name = "datasets/monkey.txt"
         Realfile_name = "datasets/monkeyReal1.clu"
+        N_clusters = int(input("Enter the number of clusters (5 - 12): "))
 
     # Abertura do arquivo como leitura
     read = open(file_name, 'r')
@@ -133,11 +133,7 @@ def main():
     while (run and i < N_iterations):
         run = group(dots_X, dots_Y, centroids_X, centroids_Y, closest_centroid)
         i = i + 1
-
-    print(str(i) + " iterations were made\n")
-
-    print(centroids_X)
-    print(centroids_Y)
+        
     print("\nAdjusted Rand Score: " + str(adjusted_rand_score(compare_values, closest_centroid)))
 
     # Determina o limite de X e Y do grafico
