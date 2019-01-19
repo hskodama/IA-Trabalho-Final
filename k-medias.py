@@ -7,7 +7,6 @@ Author: Henrique Kodama, Carlos Tadeu, Vinicius Salinas, Bruno Peres
 Copyright (c) 2019 Your Company
 '''
 
-import random
 import numpy as np
 import matplotlib.pyplot as plot
 import random
