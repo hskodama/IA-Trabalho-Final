@@ -11,6 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plot
 import random
 import math
+import csv
 from sklearn.metrics.cluster import adjusted_rand_score
 
 # Detclaracao do tamanho do grafico, tipo de grafico
@@ -86,16 +87,19 @@ def main():
     N_iterations = int(input("Enter the amount of iterations: "))
 
     if (option == 1):
-        file_name = "datasets/c2ds1-2sp.txt"
-        Realfile_name = "datasets/c2ds1-2spReal.clu"
+        file_name = "../../datasets/c2ds1-2sp.txt"
+        Realfile_name = "../../datasets/c2ds1-2spReal.clu"
+        resultfile_name = "../../Resultados/k-medias_results1.csv"
         N_clusters = int(input("Enter the number of clusters (2 - 5): "))
     elif (option == 2):
-        file_name = "datasets/c2ds3-2g.txt"
-        Realfile_name = "datasets/c2ds3-2gReal.clu"
+        file_name = "../../datasets/c2ds3-2g.txt"
+        Realfile_name = "../../datasets/c2ds3-2gReal.clu"
+        resultfile_name = "../../Resultados/k-medias_results2.csv"
         N_clusters = int(input("Enter the number of clusters (2 - 5): "))
     elif (option == 3):
-        file_name = "datasets/monkey.txt"
-        Realfile_name = "datasets/monkeyReal1.clu"
+        file_name = "../../datasets/monkey.txt"
+        Realfile_name = "../../datasets/monkeyReal1.clu"
+        resultfile_name = "../../Resultados/k-medias_results3.csv"
         N_clusters = int(input("Enter the number of clusters (5 - 12): "))
 
     # Abertura do arquivo como leitura
@@ -133,7 +137,8 @@ def main():
         run = group(dots_X, dots_Y, centroids_X, centroids_Y, closest_centroid)
         i = i + 1
         
-    print("\nAdjusted Rand Score: " + str(adjusted_rand_score(compare_values, closest_centroid)))
+    ARI = adjusted_rand_score(compare_values, closest_centroid)
+    print("\nAdjusted Rand Score: " + str(ARI))
 
     # Determina o limite de X e Y do grafico
     plot.xlim(min(dots_X) - 1, max(dots_X) + 1)
@@ -147,14 +152,26 @@ def main():
     # Plota os centroides como estrelas
     for i in range(len(centroids_X)):
         plot.plot(centroids_X[i], centroids_Y[i], centroid_color[i % 8], markersize=10)
+    plot.savefig('resultado.png', bbox_inches = 'tight')
 
     # Plota os pontos para verificacao na FIGURA2
     plot.figure(2)
     for i in range(len(dots_X)):
         plot.plot(dots_X[i], dots_Y[i], colors[compare_values[i] % 8], markersize=1)
+    plot.savefig('real.png', bbox_inches = 'tight')
 
-    plot.show()
-
+    with open(resultfile_name, 'w') as csvfile:
+        fieldnames = ['Real', 'Calculado', 'Centroides', 'ARI']
+        writer = csv.DictWriter(csvfile, fieldnames = fieldnames)
+        writer.writeheader()
+        i = 0
+        for i in range (len(compare_values)):
+            if(i == 0):
+                writer.writerow({'Real': compare_values[i], 'Calculado': closest_centroid[i], 'Centroides': (centroids_X[i], centroids_Y[i]), 'ARI': ARI})
+            elif(i < N_clusters):
+                writer.writerow({'Real': compare_values[i], 'Calculado': closest_centroid[i], 'Centroides': (centroids_X[i], centroids_Y[i])})
+            else:
+                writer.writerow({'Real': compare_values[i], 'Calculado': closest_centroid[i]})
 
 if __name__ == "__main__":
     main()
