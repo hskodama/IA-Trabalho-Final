@@ -2,7 +2,7 @@
 Implementação do trabalho final da disciplina de Inteligência Artificial
 
 Grupo:
-* [Bruno Peres](https://github.com/MDK) 
+* [Bruno Peres](https://github.com/mdk97) 
 * [Carlos Tadeu](https://github.com/CarlosTadeu)
 * [Henrique Kodama](https://github.com/hskodama)
 * [Vinicius Salinas](https://github.com/viniciussalinas)
