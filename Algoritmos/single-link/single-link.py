@@ -1,21 +1,28 @@
 
+<<<<<<< HEAD
 import numpy as np 
 from scipy.cluster.hierarchy import dendrogram, linkage
 from scipy.spatial.distance import cdist
+=======
+import numpy as np # linear algebra
+>>>>>>> b1fd0cec30e8f7b8c88426134ab85312d0908034
 from matplotlib import pyplot as plt
-from scipy.spatial import distance
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics.cluster import adjusted_rand_score
+<<<<<<< HEAD
 import csv
+=======
+>>>>>>> b1fd0cec30e8f7b8c88426134ab85312d0908034
 import scipy.cluster.hierarchy as shc
 
-
-import math
-
 def main():
+<<<<<<< HEAD
     # dots_X contem as coordenadas X dos pontos
     # dots_Y contem as coordenadas Y dos pontos
     real_value = []
+=======
+    compare_values = []
+>>>>>>> b1fd0cec30e8f7b8c88426134ab85312d0908034
     i = 0
 
     # Pergunta o arquivo desejado
@@ -33,6 +40,7 @@ def main():
     #kMax = int(input("Kmax: "))
 
     if (option == 1):
+<<<<<<< HEAD
         file_name = "../../datasets/c2ds1-2sp.txt"
         Realfile_name = "../../datasets/c2ds1-2spReal.clu"
         resultfile_name = "../../Resultados/single-link_results1.csv"
@@ -51,6 +59,16 @@ def main():
         dendoimage_name = "resultado3.png"
         realimage_name = "dendrogram3.png"
         clusters = 8
+=======
+        file_name = "datasets/c2ds1-2sp.txt"
+        realfile_name = "datasets/c2ds1-2spReal.clu"
+    elif (option == 2):
+        file_name = "datasets/c2ds3-2g.txt"
+        realfile_name = "datasets/c2ds3-2gReal.clu"
+    elif (option == 3):
+        file_name = "datasets/monkey.txt"
+        realfile_name = "datasets/monkeyReal1.clu"
+>>>>>>> b1fd0cec30e8f7b8c88426134ab85312d0908034
 
     # Abertura do arquivo como leitura
     read = open(file_name, 'r')
@@ -70,6 +88,7 @@ def main():
         i = i + 1
     read.close()
 
+<<<<<<< HEAD
     read = open(Realfile_name, 'r')
 
     # Separacao da segunda coluna do arquivo
@@ -78,6 +97,26 @@ def main():
         real_value.append(int(newline[1]))
 
     X = np.array(X)
+=======
+    cluster = AgglomerativeClustering(n_clusters=8, affinity='euclidean', linkage='average')
+    cluster.fit_predict(X)
+    #print(cluster.labels_)
+    plt.scatter(X[:, 0], X[:, 1], c=cluster.labels_, cmap='rainbow', s=2)
+
+    plt.figure(figsize=(10, 7))
+    plt.title("Customer Dendograms")
+    dend = shc.dendrogram(shc.linkage(X, method='average'))
+
+    # Abertura do arquivo Real
+    read = open(realfile_name, 'r')
+
+    # Separacao da segunda coluna do arquivo
+    for line in read:
+        newline = line.rstrip("\n").split("\t")
+        compare_values.append(int(newline[1]))
+
+    print("\nAdjusted Rand Score: " + str(adjusted_rand_score(compare_values, cluster.labels_)))
+>>>>>>> b1fd0cec30e8f7b8c88426134ab85312d0908034
 
 
     cluster = AgglomerativeClustering(n_clusters=clusters, affinity='euclidean', linkage='single')
