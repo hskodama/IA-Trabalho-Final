@@ -90,16 +90,22 @@ def main():
         file_name = "../../datasets/c2ds1-2sp.txt"
         Realfile_name = "../../datasets/c2ds1-2spReal.clu"
         resultfile_name = "../../Resultados/k-medias_results1.csv"
+        resultimage_name = "resultado1.png"
+        realimage_name = "real1.png"
         N_clusters = int(input("Enter the number of clusters (2 - 5): "))
     elif (option == 2):
         file_name = "../../datasets/c2ds3-2g.txt"
         Realfile_name = "../../datasets/c2ds3-2gReal.clu"
         resultfile_name = "../../Resultados/k-medias_results2.csv"
+        resultimage_name = "resultado2.png"
+        realimage_name = "real2.png"
         N_clusters = int(input("Enter the number of clusters (2 - 5): "))
     elif (option == 3):
         file_name = "../../datasets/monkey.txt"
         Realfile_name = "../../datasets/monkeyReal1.clu"
         resultfile_name = "../../Resultados/k-medias_results3.csv"
+        resultimage_name = "resultado3.png"
+        realimage_name = "real3.png"
         N_clusters = int(input("Enter the number of clusters (5 - 12): "))
 
     # Abertura do arquivo como leitura
@@ -151,13 +157,13 @@ def main():
     # Plota os centroides como estrelas
     for i in range(len(centroids_X)):
         plot.plot(centroids_X[i], centroids_Y[i], centroid_color[i % 8], markersize=10)
-    plot.savefig('resultado.png', bbox_inches = 'tight')
+    plot.savefig(resultimage_name, bbox_inches = 'tight')
 
     # Plota os pontos para verificacao na FIGURA2
     plot.figure(2)
     for i in range(len(dots_X)):
         plot.plot(dots_X[i], dots_Y[i], colors[compare_values[i] % 8], markersize=1)
-    plot.savefig('real.png', bbox_inches = 'tight')
+    plot.savefig(realimage_name, bbox_inches = 'tight')
 
     with open(resultfile_name, 'w') as csvfile:
         fieldnames = ['Real', 'Calculado', 'Centroides', 'ARI']
