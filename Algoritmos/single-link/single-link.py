@@ -1,23 +1,13 @@
 
 import numpy as np # linear algebra
-from scipy.cluster.hierarchy import dendrogram, linkage
-from scipy.spatial.distance import cdist
 from matplotlib import pyplot as plt
-from scipy.spatial import distance
 from sklearn.cluster import AgglomerativeClustering
-
-
+from sklearn.metrics.cluster import adjusted_rand_score
 import scipy.cluster.hierarchy as shc
 
-
-import math
-
 def main():
-    # dots_X contem as coordenadas X dos pontos
-    # dots_Y contem as coordenadas Y dos pontos
-    dots_X, dots_Y, centroids_X, centroids_Y, closest_centroid = ([] for i in range(5))
+    compare_values = []
     i = 0
-    run = 1
 
     # Pergunta o arquivo desejado
     print(""" 
@@ -32,12 +22,15 @@ def main():
     #kMin = int(input("Kmin: "))
     #kMax = int(input("Kmax: "))
 
-    if(option == 1):
+    if (option == 1):
         file_name = "datasets/c2ds1-2sp.txt"
-    elif(option == 2):
+        realfile_name = "datasets/c2ds1-2spReal.clu"
+    elif (option == 2):
         file_name = "datasets/c2ds3-2g.txt"
-    elif(option == 3):
+        realfile_name = "datasets/c2ds3-2gReal.clu"
+    elif (option == 3):
         file_name = "datasets/monkey.txt"
+        realfile_name = "datasets/monkeyReal1.clu"
 
     # Abertura do arquivo como leitura
     read = open(file_name, 'r')
@@ -58,14 +51,24 @@ def main():
     read.close()
     X = np.array(X)
 
-    cluster = AgglomerativeClustering(n_clusters=5, affinity='euclidean', linkage='single')
+    cluster = AgglomerativeClustering(n_clusters=8, affinity='euclidean', linkage='average')
     cluster.fit_predict(X)
     #print(cluster.labels_)
-    plt.scatter(X[:, 0], X[:, 1], c=cluster.labels_, cmap='rainbow')
+    plt.scatter(X[:, 0], X[:, 1], c=cluster.labels_, cmap='rainbow', s=2)
 
     plt.figure(figsize=(10, 7))
     plt.title("Customer Dendograms")
-    dend = shc.dendrogram(shc.linkage(X, method='single'))
+    dend = shc.dendrogram(shc.linkage(X, method='average'))
+
+    # Abertura do arquivo Real
+    read = open(realfile_name, 'r')
+
+    # Separacao da segunda coluna do arquivo
+    for line in read:
+        newline = line.rstrip("\n").split("\t")
+        compare_values.append(int(newline[1]))
+
+    print("\nAdjusted Rand Score: " + str(adjusted_rand_score(compare_values, cluster.labels_)))
 
     plt.show()
 
