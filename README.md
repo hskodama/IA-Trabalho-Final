@@ -8,7 +8,8 @@ Grupo:
 * [Vinicius Salinas](https://github.com/viniciussalinas)
 
 ## Pre-requisitos
-Alguns pacotes devem ser instalados para que o projeto rode sem erros.
+Os programs foram desenvolvidos em python 2.7. 
+Para tanto, alguns pacotes são necessários, caso já não estejam instalados, para que não haja problemas:
 ```
-pip install numpy matplotlib sklearn
+pip install numpy matplotlib sklearn scipy
 ```
