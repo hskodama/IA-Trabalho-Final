@@ -72,9 +72,11 @@ def main():
     # closest_centroid contem o numero do centroide mais proximo do ponto em dada iteracao (0, 1, .... , N)
     # compare_values eh utilizado para o indice rand ajustado para comparar a similaridade entre clusters
     # i e utilizado como auxiliar
-    dots_X, dots_Y, centroids_X, centroids_Y, closest_centroid, compare_values = ([] for i in range(6))
+    dots_X, dots_Y, centroids_X, centroids_Y, closest_centroid, compare_values, ARI = ([] for i in range(7))
     i = 0
     run = 1
+    k_min = 0 
+    k_max = 0
 
     # Pergunta o arquivo desejado e espera a quantidade de clusters desejados
     print(""" 
@@ -89,29 +91,29 @@ def main():
     if (option == 1):
         file_name = "../../datasets/c2ds1-2sp.txt"
         Realfile_name = "../../datasets/c2ds1-2spReal.clu"
-        resultfile_name = "../../Resultados/k-medias_results1.csv"
         resultimage_name = "resultado1.png"
         realimage_name = "real1.png"
-        N_clusters = int(input("Enter the number of clusters (2 - 5): "))
+        k_min = 2
+        k_max = 5
     elif (option == 2):
         file_name = "../../datasets/c2ds3-2g.txt"
         Realfile_name = "../../datasets/c2ds3-2gReal.clu"
-        resultfile_name = "../../Resultados/k-medias_results2.csv"
         resultimage_name = "resultado2.png"
         realimage_name = "real2.png"
-        N_clusters = int(input("Enter the number of clusters (2 - 5): "))
+        k_min = 2
+        k_max = 5
     elif (option == 3):
         file_name = "../../datasets/monkey.txt"
         Realfile_name = "../../datasets/monkeyReal1.clu"
-        resultfile_name = "../../Resultados/k-medias_results3.csv"
         resultimage_name = "resultado3.png"
         realimage_name = "real3.png"
-        N_clusters = int(input("Enter the number of clusters (5 - 12): "))
+        k_min = 5
+        k_max = 12
 
+    # Leitura dos dados. Vale notar que os dados estao com '.' em vez de ',' portanto e necessario modificar
     # Abertura do arquivo como leitura
     read = open(file_name, 'r')
 
-    # Leitura dos dados. Vale notar que os dados estao com '.' em vez de ',' portanto e necessario modificar
     for line in read:
         newline = line.rstrip("\n").split("\t")
         newline[1].replace(".", ",")
@@ -130,53 +132,56 @@ def main():
         newline = line.rstrip("\n").split("\t")
         compare_values.append(int(newline[1]))
 
-    # Determinacao das coordenadas dos clusters aleatoriamente
-    for i in range(N_clusters):
-        centroids_X.append(round(random.uniform(min(dots_X), max(dots_X)), 4))
-        centroids_Y.append(round(random.uniform(min(dots_Y), max(dots_Y)), 4))
+    for j in range(k_min, k_max + 1):
+        resultimage_name = "resultado" + str(option) + "_" + str(j) + ".png"
+        resultfile_name = "../../Resultados/k-medias_results" + str(option) + ".csv"
+        centroids_X = []
+        centroids_Y = []
+        closest_centroid = []
 
-    initialize(dots_X, dots_Y, centroids_X, centroids_Y, closest_centroid)
+        # Determinacao das coordenadas dos clusters aleatoriamente
+        for i in range(j):
+            centroids_X.append(round(random.uniform(min(dots_X), max(dots_X)), 4))
+            centroids_Y.append(round(random.uniform(min(dots_Y), max(dots_Y)), 4))
 
-    # Loop principal do algoritmo
-    i = 1
-    while (run and i < N_iterations):
-        run = group(dots_X, dots_Y, centroids_X, centroids_Y, closest_centroid)
-        i = i + 1
-        
-    ARI = adjusted_rand_score(compare_values, closest_centroid)
+        initialize(dots_X, dots_Y, centroids_X, centroids_Y, closest_centroid)
 
-    # Determina o limite de X e Y do grafico
-    plot.xlim(min(dots_X) - 1, max(dots_X) + 1)
-    plot.ylim(min(dots_Y) - 1, max(dots_Y) + 1)
+        # Loop principal do algoritmo
+        i = 1
+        while (run and i < N_iterations):
+            run = group(dots_X, dots_Y, centroids_X, centroids_Y, closest_centroid)
+            i = i + 1
+            
+        ARI.append(adjusted_rand_score(compare_values, closest_centroid))
+        print(ARI)
+        # Determina o limite de X e Y do grafico
+        plot.xlim(min(dots_X) - 1, max(dots_X) + 1)
+        plot.ylim(min(dots_Y) - 1, max(dots_Y) + 1)
 
-    # Plota os pontos e atribui a cor ao centroide correspondente na FIGURA1
-    plot.figure(1)
-    for i in range(len(dots_X)):
-        plot.plot(dots_X[i], dots_Y[i], colors[closest_centroid[i] % 8], markersize=1)
+        # Plota os pontos e atribui a cor ao centroide correspondente na FIGURA1
+        plot.figure(1)
+        plot.clf()
+        for i in range(len(dots_X)):
+            plot.plot(dots_X[i], dots_Y[i], colors[closest_centroid[i] % 8], markersize=1)
 
-    # Plota os centroides como estrelas
-    for i in range(len(centroids_X)):
-        plot.plot(centroids_X[i], centroids_Y[i], centroid_color[i % 8], markersize=10)
-    plot.savefig(resultimage_name, bbox_inches = 'tight')
+        # Plota os centroides como estrelas
+        for i in range(len(centroids_X)):
+            plot.plot(centroids_X[i], centroids_Y[i], centroid_color[i % 8], markersize=10)
+        plot.savefig(resultimage_name, bbox_inches = 'tight')   
 
-    # Plota os pontos para verificacao na FIGURA2
-    plot.figure(2)
-    for i in range(len(dots_X)):
-        plot.plot(dots_X[i], dots_Y[i], colors[compare_values[i] % 8], markersize=1)
-    plot.savefig(realimage_name, bbox_inches = 'tight')
+        # Plota os pontos para verificacao na FIGURA2
+        # plot.figure(2)
+        # for i in range(len(dots_X)):
+        #     plot.plot(dots_X[i], dots_Y[i], colors[compare_values[i] % 8], markersize=1)
+        # plot.savefig(realimage_name, bbox_inches = 'tight')
 
     with open(resultfile_name, 'w') as csvfile:
-        fieldnames = ['Real', 'Calculado', 'Centroides', 'ARI']
+        fieldnames = ['N. clusters', 'ARI']
         writer = csv.DictWriter(csvfile, fieldnames = fieldnames)
         writer.writeheader()
         i = 0
-        for i in range (len(compare_values)):
-            if(i == 0):
-                writer.writerow({'Real': compare_values[i], 'Calculado': closest_centroid[i], 'Centroides': (centroids_X[i], centroids_Y[i]), 'ARI': ARI})
-            elif(i < N_clusters):
-                writer.writerow({'Real': compare_values[i], 'Calculado': closest_centroid[i], 'Centroides': (centroids_X[i], centroids_Y[i])})
-            else:
-                writer.writerow({'Real': compare_values[i], 'Calculado': closest_centroid[i]})
+        for i in range (len(ARI)):
+            writer.writerow({'N. clusters': i + k_min, 'ARI': ARI[i]})
 
 if __name__ == "__main__":
     main()
