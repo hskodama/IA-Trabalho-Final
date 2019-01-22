@@ -153,7 +153,6 @@ def main():
             i = i + 1
             
         ARI.append(adjusted_rand_score(compare_values, closest_centroid))
-        print(ARI)
         # Determina o limite de X e Y do grafico
         plot.xlim(min(dots_X) - 1, max(dots_X) + 1)
         plot.ylim(min(dots_Y) - 1, max(dots_Y) + 1)
